@@ -24,7 +24,10 @@ class User extends Authenticatable implements JWTSubject
         });
 
         static::updating(function (User $user) {
-            $user->password = bcrypt($user->password);
+            if(request()->password) {
+                $user->password = bcrypt($user->password);
+            }
+
         });
     }
 
