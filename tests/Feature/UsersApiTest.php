@@ -68,6 +68,20 @@ class UsersApiTest extends TestCase
 
     /**
      * @test
+     */
+    public function it_throws_an_exception_when_an_invalid_token_is_provided()
+    {
+        $this->authenticate(['role' => 1]);
+
+        $headers['Authorization'] = 'Bearer aaaaa';
+
+        $this->withHeaders($headers)->json('GET', '/api/v1/usuarios')
+            ->assertStatus(400)
+            ->assertJson(['status' => 'Token is Invalid']);
+    }
+
+    /**
+     * @test
     */
     public function it_creates_a_user()
     {
