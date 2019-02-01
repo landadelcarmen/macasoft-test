@@ -20,6 +20,11 @@ class User extends Authenticatable implements JWTSubject
             if(!$user->avatar) {
                 $user->avatar = static::generateAvatar();
             }
+            $user->password = bcrypt($user->password);
+        });
+
+        static::updating(function (User $user) {
+            $user->password = bcrypt($user->password);
         });
     }
 

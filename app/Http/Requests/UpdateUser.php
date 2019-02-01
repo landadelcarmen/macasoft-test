@@ -27,8 +27,8 @@ class UpdateUser extends FormRequest
             'name' => 'sometimes|string|required',
             'email' => 'sometimes|email|unique:users,email|required',
             'role' => 'sometimes|integer|in:1,2,3|required',
-            'password' => 'sometimes|string|required',
-            'avatar' => 'sometimes|file|image|required'
+            'password' => 'sometimes|confirmed|string|required',
+            'avatar' => 'sometimes|required'
         ];
     }
 }

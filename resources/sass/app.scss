@@ -28,9 +28,9 @@ form {
   transition: all .35s;
 }
 .view-fade-enter, .view-fade-leave-to {
-  opacity: 0;
-  transform: scale3d(1.5, 1.5, 1.5);
-  filter: blur(25px);
+  opacity: .5;
+  transform: scale3d(1.25, 1.25, 1.25);
+  filter: blur(15px);
 }
 
 .fade-enter-active, .fade-leave-active {

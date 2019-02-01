@@ -2,9 +2,11 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-import VueRouter from 'vue-router'
+import VueRouter from 'vue-router';
+import VModal from 'vue-js-modal';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
+Vue.use(VModal);
 
 
 import Page404 from './components/Page404';
@@ -27,7 +29,7 @@ const routes = [
 
 ];
 
-const router = new VueRouter({ routes });
+const router = new VueRouter({ routes, });
 
 router.beforeEach((to, from, next) => {
 
@@ -97,6 +99,7 @@ router.beforeEach((to, from, next) => {
 });
 
 const app = new Vue({
+
     router,
 
     computed: {

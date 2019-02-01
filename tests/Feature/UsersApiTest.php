@@ -199,7 +199,9 @@ class UsersApiTest extends TestCase
             'name' => 'ipsum',
             'role' => 1,
             'email' => 'ipsum@email.com',
-            'password' => bcrypt('secret1')
+            'password' => 'secret1',
+            'password_confirmation' => 'secret1',
+
         ];
 
         $this->withHeaders($headers)->json('PUT', '/api/v1/usuarios/'.$user->id, $data)

@@ -7,16 +7,16 @@
         <div>
             <table class="w-full">
                 <tbody>
-                <tr v-for="user in listUsers" :key="user.id">
+                <tr v-for="user in listUsers" :key="user.id" :class="user.deleted_at ? 'bg-grey-light' : ''">
                     <td class="flex justify-center items-center px-2">
-                        <div class="rounded-full h-12 w-12 my-2 overflow-hidden border-2 border-blue-dark">
+                        <div class="rounded-full h-12 w-12 my-2 overflow-hidden border-2 border-blue-dark" :style="isSoftDeleted(user)">
                             <img :src="`/storage/avatars/${user.avatar}`" class="h-full w-auto" alt="">
                         </div>
 
                     </td>
                     <td class="w-1/2 px-2">
                         <a href="#" @click.prevent="$router.push(`/usuarios/${user.id}`)" class="text-blue-dark no-underline">
-                            <span class="font-bold underline text-sm">{{  user.name  }}</span><br>
+                            <span class="font-bold underline text-sm">{{  user.name  }} {{user.deleted_at ? '(eliminado)' : ''}}</span><br>
                             <span class="uppercase text-xs text-grey-darker">{{ $root.role(user.role) }}</span>
                         </a>
                     </td>
@@ -60,14 +60,18 @@
         computed: {
             listUsers() {
                 return this.users[this.page];
-            }
+            },
         },
+
+        methods: {
+            isSoftDeleted(user) {
+                return user.deleted_at ? 'filter: grayscale(100%); border-color: black': '';
+            }
+        }
 
     }
 </script>
 
 <style scoped>
-    tr:nth-child(odd) {
-        background: #e3fcec;
-    }
+
 </style>

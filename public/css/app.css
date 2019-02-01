@@ -561,11 +561,11 @@ form {
 
 .view-fade-enter,
 .view-fade-leave-to {
-  opacity: 0;
-  -webkit-transform: scale3d(1.5, 1.5, 1.5);
-          transform: scale3d(1.5, 1.5, 1.5);
-  -webkit-filter: blur(25px);
-          filter: blur(25px);
+  opacity: .5;
+  -webkit-transform: scale3d(1.25, 1.25, 1.25);
+          transform: scale3d(1.25, 1.25, 1.25);
+  -webkit-filter: blur(15px);
+          filter: blur(15px);
 }
 
 .fade-enter-active,

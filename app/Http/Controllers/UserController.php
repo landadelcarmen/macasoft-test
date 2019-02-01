@@ -21,12 +21,12 @@ class UserController extends Controller
 	{
 	    $this->authorize('index', User::class);
 
-		return User::all()->chunk(5);
+		return User::withTrashed()->get()->chunk(5);
 	}
 
     public function show($user)
     {
-        $user = User::findOrFail($user);
+        $user = User::withTrashed()->findOrFail($user);
 
         $this->authorize('view', $user);
 
@@ -57,7 +57,7 @@ class UserController extends Controller
 
     public function destroy($user)
     {
-        $user = User::findOrFail($user);
+        $user = User::withTrashed()->findOrFail($user);
 
         $this->authorize('delete', $user);
 
@@ -103,7 +103,7 @@ class UserController extends Controller
      */
     private function requestWithAvatarPath($data, $user = null)
     {
-        if($user) {
+        if($user && request()->file('avatar')) {
             Storage::delete('public/avatars/' . $user->avatar);
         }
 
