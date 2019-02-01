@@ -28,7 +28,6 @@ class StoreUser extends FormRequest
             'role' => 'integer|in:1,2,3|required',
             'email' => 'email|unique:users,email|required',
             'password' => 'string|confirmed|required',
-            'avatar' => 'image|file|required'
         ];
     }
 }

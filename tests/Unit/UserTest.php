@@ -61,22 +61,6 @@ class UserTest extends TestCase
     /**
      * @test
      */
-    public function it_requires_an_avatar()
-    {
-        $user = [
-            'name' => 'lorem',
-            'email' => 'lorem@mail.com',
-            'password' => bcrypt('lorem')
-        ];
-
-        $this->expectException('\Illuminate\Database\QueryException');
-
-        \App\User::create($user);
-    }
-
-    /**
-     * @test
-     */
     public function it_requires_a_role()
     {
         $user = [

@@ -90,6 +90,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
@@ -663,7 +664,22 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    Página no Encontrada\n")])
+  return _c("div", { staticClass: "card" }, [
+    _vm._v("\n    La página que buscas no existe.\n    "),
+    _c(
+      "button",
+      {
+        staticClass: "btn mt-4 w-1/3 ml-auto",
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            _vm.$router.push("/")
+          }
+        }
+      },
+      [_vm._v("Volver")]
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -996,19 +1012,21 @@ var render = function() {
   return _c("div", { staticClass: "card" }, [
     _c("h2", { staticClass: "p-4 flex justify-between items-center" }, [
       _vm._v("\n        Usuarios\n        "),
-      _c(
-        "button",
-        {
-          staticClass: "btn",
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              _vm.$router.push({ path: "/usuarios/nuevo" })
-            }
-          }
-        },
-        [_vm._v("Nuevo Usuario")]
-      )
+      _vm.$root.isAdmin
+        ? _c(
+            "button",
+            {
+              staticClass: "btn",
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  _vm.$router.push({ path: "/usuarios/nuevo" })
+                }
+              }
+            },
+            [_vm._v("Nuevo Usuario")]
+          )
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c("div", [
@@ -1017,7 +1035,28 @@ var render = function() {
           "tbody",
           _vm._l(_vm.listUsers, function(user) {
             return _c("tr", { key: user.id }, [
-              _vm._m(0, true),
+              _c(
+                "td",
+                { staticClass: "flex justify-center items-center px-2" },
+                [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "rounded-full h-12 w-12 my-2 overflow-hidden border-2 border-blue-dark"
+                    },
+                    [
+                      _c("img", {
+                        staticClass: "h-full w-auto",
+                        attrs: {
+                          src: "/storage/avatars/" + user.avatar,
+                          alt: ""
+                        }
+                      })
+                    ]
+                  )
+                ]
+              ),
               _vm._v(" "),
               _c("td", { staticClass: "w-1/2 px-2" }, [
                 _c(
@@ -1062,9 +1101,9 @@ var render = function() {
             { staticClass: "p-4" },
             _vm._l(_vm.users, function(user, index) {
               return _c("button", {
-                key: "user" + user,
+                key: "user" + index,
                 staticClass:
-                  "cursor-pointer py-2 px-4 hover:bg-blue-dark hover:text-white border-t-2 border-blue-dark",
+                  "cursor-pointer focus:outline-none py-2 px-4 hover:bg-blue-dark hover:text-white border-t-2 border-blue-dark",
                 class: index === _vm.page ? "bg-blue-dark text-white" : "",
                 domProps: { textContent: _vm._s(index + 1) },
                 on: {
@@ -1081,28 +1120,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { staticClass: "flex justify-center items-center px-2" }, [
-      _c(
-        "div",
-        { staticClass: "rounded-full h-12 w-12 my-2 overflow-hidden" },
-        [
-          _c("img", {
-            staticClass: "h-full w-auto",
-            attrs: {
-              src: "https://i.ytimg.com/vi/K4zm30yeHHE/maxresdefault.jpg",
-              alt: ""
-            }
-          })
-        ]
-      )
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -1334,13 +1352,22 @@ var routes = [{
   component: _components_LoginForm__WEBPACK_IMPORTED_MODULE_2__["default"]
 }, {
   path: '/usuarios',
-  component: _components_UsersIndex__WEBPACK_IMPORTED_MODULE_4__["default"]
+  component: _components_UsersIndex__WEBPACK_IMPORTED_MODULE_4__["default"],
+  meta: {
+    authenticated: true
+  }
 }, {
   path: '/usuarios/nuevo',
-  component: _components_UsersCreateForm__WEBPACK_IMPORTED_MODULE_5__["default"]
+  component: _components_UsersCreateForm__WEBPACK_IMPORTED_MODULE_5__["default"],
+  meta: {
+    authenticated: true
+  }
 }, {
   path: '/usuarios/:user_id',
-  component: _components_UsersShow__WEBPACK_IMPORTED_MODULE_3__["default"]
+  component: _components_UsersShow__WEBPACK_IMPORTED_MODULE_3__["default"],
+  meta: {
+    authenticated: true
+  }
 }, {
   path: '*',
   component: _components_Page404__WEBPACK_IMPORTED_MODULE_1__["default"]
@@ -1351,6 +1378,12 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
 router.beforeEach(function (to, from, next) {
   var token = localStorage.token;
   var user = localStorage.user;
+
+  if (to.meta.authenticated && !token) {
+    return next({
+      path: '/login'
+    });
+  }
 
   if (to.path == '/') {
     if (!token) {
@@ -1372,6 +1405,10 @@ router.beforeEach(function (to, from, next) {
     }
   }
 
+  if (to.path == '/pagina-no-encontrada') {
+    return next();
+  }
+
   if (to.path == '/login') {
     if (token && JSON.parse(user).role !== 3) {
       return next({
@@ -1383,9 +1420,9 @@ router.beforeEach(function (to, from, next) {
       return next({
         path: "/usuarios/".concat(JSON.parse(user).id)
       });
-    } else {
-      return next();
     }
+
+    return next();
   }
 
   if (to.path == '/usuarios') {
@@ -1393,15 +1430,39 @@ router.beforeEach(function (to, from, next) {
       return next({
         path: '/pagina-no-encontrada'
       });
-    } else {
+    }
+
+    return next();
+  }
+
+  if (to.path == '/usuarios/nuevo') {
+    if (token && JSON.parse(user).role === 1) {
       return next();
     }
+
+    return next({
+      path: '/pagina-no-encontrada'
+    });
+  }
+
+  if (to.params.user_id != JSON.parse(user).id && JSON.parse(user).role == 3) {
+    return next({
+      path: '/pagina-no-encontrada'
+    });
   }
 
   return next();
 });
 var app = new Vue({
   router: router,
+  computed: {
+    isAdmin: function isAdmin() {
+      return JSON.parse(localStorage.user).role == 1;
+    },
+    isAuthenticated: function isAuthenticated() {
+      return localStorage.getItem('token');
+    }
+  },
   methods: {
     role: function role(_role) {
       if (_role === 1) {
@@ -1413,9 +1474,6 @@ var app = new Vue({
       }
 
       return 'usuario';
-    },
-    isAuthenticated: function isAuthenticated() {
-      return localStorage.getItem('token');
     },
     logout: function logout() {
       localStorage.removeItem('token');

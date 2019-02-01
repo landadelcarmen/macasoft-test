@@ -6,11 +6,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable, SoftDeletes;
+
+    public static function boot() {
+        parent::boot();
+
+        static::creating(function (User $user) {
+            if(!$user->avatar) {
+                $user->avatar = static::generateAvatar();
+            }
+        });
+    }
 
     /**
      * The attributes that should be mutated to dates.
@@ -75,5 +86,16 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public static function generateAvatar()
+    {
+        $icon = new \Jdenticon\Identicon();
+        $name = str_random(10);
+        $icon->setValue($name);
+        $icon->setSize(200);
+        Storage::put('public/avatars/'.$name.'.png', $icon->getImageData('png'));
+        return $name.'.png';
+
     }
 }

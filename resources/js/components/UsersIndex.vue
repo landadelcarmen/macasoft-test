@@ -2,15 +2,15 @@
     <div class="card">
         <h2 class="p-4 flex justify-between items-center">
             Usuarios
-            <button @click.prevent="$router.push({path: '/usuarios/nuevo'})" class="btn">Nuevo Usuario</button>
+            <button v-if="$root.isAdmin" @click.prevent="$router.push({path: '/usuarios/nuevo'})" class="btn">Nuevo Usuario</button>
         </h2>
         <div>
             <table class="w-full">
                 <tbody>
                 <tr v-for="user in listUsers" :key="user.id">
                     <td class="flex justify-center items-center px-2">
-                        <div class="rounded-full h-12 w-12 my-2 overflow-hidden">
-                            <img src="https://i.ytimg.com/vi/K4zm30yeHHE/maxresdefault.jpg" class="h-full w-auto" alt="">
+                        <div class="rounded-full h-12 w-12 my-2 overflow-hidden border-2 border-blue-dark">
+                            <img :src="`/storage/avatars/${user.avatar}`" class="h-full w-auto" alt="">
                         </div>
 
                     </td>
@@ -26,11 +26,11 @@
             </table>
             <div class="p-4" v-if="users.length > 1">
                 <button
-                    class="cursor-pointer py-2 px-4 hover:bg-blue-dark hover:text-white border-t-2 border-blue-dark"
+                    class="cursor-pointer focus:outline-none py-2 px-4 hover:bg-blue-dark hover:text-white border-t-2 border-blue-dark"
 
                     :class="index === page ? 'bg-blue-dark text-white': ''"
                     v-for="(user,index) in users"
-                    :key="'user'+user"
+                    :key="'user'+index"
                     @click.prevent="page = index"
                     v-text="index + 1"
                 ></button>

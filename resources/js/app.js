@@ -17,11 +17,11 @@ const routes = [
 
     { path: '/login', component: LoginForm },
 
-    { path: '/usuarios', component: UsersIndex },
+    { path: '/usuarios', component: UsersIndex,  meta: { authenticated: true }},
 
-    { path: '/usuarios/nuevo', component: UsersCreateForm },
+    { path: '/usuarios/nuevo', component: UsersCreateForm,  meta: { authenticated: true }},
 
-    { path: '/usuarios/:user_id', component: UsersShow},
+    { path: '/usuarios/:user_id', component: UsersShow ,meta: { authenticated: true }},
 
     { path: '*', component: Page404 }
 
@@ -34,6 +34,9 @@ router.beforeEach((to, from, next) => {
     let token = localStorage.token;
     let user = localStorage.user;
 
+    if(to.meta.authenticated && !token) {
+        return next( { path: '/login' });
+    }
 
     if(to.path == '/') {
 
@@ -51,23 +54,42 @@ router.beforeEach((to, from, next) => {
 
     }
 
+    if(to.path == '/pagina-no-encontrada') {
+        return next();
+    }
+
     if(to.path == '/login') {
         if(token && JSON.parse(user).role !== 3) {
             return next({ path: '/usuarios'})
         }
         if(token && JSON.parse(user).role === 3) {
             return next({ path: `/usuarios/${JSON.parse(user).id}`})
-        } else {
-            return next();
         }
+
+        return next();
     }
 
     if(to.path == '/usuarios') {
         if(token && JSON.parse(user).role === 3) {
             return next({ path: '/pagina-no-encontrada'})
-        } else {
+        }
+
+        return next();
+    }
+
+    if(to.path == '/usuarios/nuevo') {
+        if(token && JSON.parse(user).role === 1) {
             return next();
         }
+
+        return next({ path: '/pagina-no-encontrada'})
+
+    }
+
+    if(to.params.user_id != JSON.parse(user).id && JSON.parse(user).role == 3) {
+
+        return next({ path: '/pagina-no-encontrada'});
+
     }
 
     return next();
@@ -77,7 +99,19 @@ router.beforeEach((to, from, next) => {
 const app = new Vue({
     router,
 
+    computed: {
+        isAdmin() {
+            return JSON.parse(localStorage.user).role == 1;
+        },
+
+        isAuthenticated() {
+            return localStorage.getItem('token');
+        },
+
+    },
+
     methods: {
+
         role(role) {
             if ( role === 1) {
                 return 'administrador';
@@ -88,10 +122,6 @@ const app = new Vue({
             }
 
             return 'usuario';
-        },
-
-        isAuthenticated() {
-            return localStorage.getItem('token');
         },
 
         logout() {

@@ -23,7 +23,7 @@
             @yield('content')
             <a
                 href="#"
-                v-if="$root.isAuthenticated()"
+                v-if="$root.isAuthenticated"
                 @click.prevent="$root.logout"
                 class="self-end p-2 text-red-dark"
             >Cerrar Sesión</a>

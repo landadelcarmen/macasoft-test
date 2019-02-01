@@ -116,6 +116,30 @@ class UsersApiTest extends TestCase
 
     /**
      * @test
+     */
+    public function if_user_doesnt_add_an_avatar_it_generates_one()
+    {
+        $headers = $this->authenticate(['role' => 1]);
+
+        $data = [
+            'name' => 'lorem',
+            'role' => 1,
+            'email' => 'lorem@email.com',
+            'password' => 'secret',
+            'password_confirmation' => 'secret'
+        ];
+        $this->withoutExceptionHandling();
+
+        $this->withHeaders($headers)->json('POST', '/api/v1/usuarios', $data)
+            ->assertStatus(201);
+
+        Storage::assertExists('/public/avatars/'.User::find(2)->avatar);
+
+        $this->assertDatabaseHas('users', ['name' => 'lorem']);
+    }
+
+    /**
+     * @test
     */
     public function it_validates_the_request_data_when_creating_a_user()
     {
@@ -123,7 +147,7 @@ class UsersApiTest extends TestCase
 
         $this->withHeaders($headers)->json('POST', '/api/v1/usuarios', [])
     		->assertStatus(422)
-    		->assertJsonValidationErrors(['name', 'email', 'password', 'avatar', 'role']);
+    		->assertJsonValidationErrors(['name', 'email', 'password', 'role']);
 
     	$this->assertCount(1, User::all());
     }
