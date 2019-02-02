@@ -1705,130 +1705,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var vue_js_modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-js-modal */ "./node_modules/vue-js-modal/dist/index.js");
 /* harmony import */ var vue_js_modal__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_js_modal__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_Page404__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Page404 */ "./resources/js/components/Page404.vue");
-/* harmony import */ var _components_LoginForm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/LoginForm */ "./resources/js/components/LoginForm.vue");
-/* harmony import */ var _components_UsersShow__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/UsersShow */ "./resources/js/components/UsersShow.vue");
-/* harmony import */ var _components_UsersIndex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/UsersIndex */ "./resources/js/components/UsersIndex.vue");
-/* harmony import */ var _components_UsersCreateForm__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/UsersCreateForm */ "./resources/js/components/UsersCreateForm.vue");
+/* harmony import */ var _routes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routes.js */ "./resources/js/routes.js");
+/* harmony import */ var _guards_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./guards.js */ "./resources/js/guards.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
 
+
+
 Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]);
 Vue.use(vue_js_modal__WEBPACK_IMPORTED_MODULE_1___default.a);
-
-
-
-
-
-var routes = [{
-  path: '/login',
-  component: _components_LoginForm__WEBPACK_IMPORTED_MODULE_3__["default"]
-}, {
-  path: '/usuarios',
-  component: _components_UsersIndex__WEBPACK_IMPORTED_MODULE_5__["default"],
-  meta: {
-    authenticated: true
-  }
-}, {
-  path: '/usuarios/nuevo',
-  component: _components_UsersCreateForm__WEBPACK_IMPORTED_MODULE_6__["default"],
-  meta: {
-    authenticated: true
-  }
-}, {
-  path: '/usuarios/:user_id',
-  component: _components_UsersShow__WEBPACK_IMPORTED_MODULE_4__["default"],
-  meta: {
-    authenticated: true
-  }
-}, {
-  path: '*',
-  component: _components_Page404__WEBPACK_IMPORTED_MODULE_2__["default"]
-}];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   mode: 'history',
-  routes: routes
+  routes: _routes_js__WEBPACK_IMPORTED_MODULE_2__["routes"]
 });
-router.beforeEach(function (to, from, next) {
-  var token = localStorage.token;
-  var user = localStorage.user;
-
-  if (to.meta.authenticated && !token) {
-    return next({
-      path: '/login'
-    });
-  }
-
-  if (to.path == '/') {
-    if (!token) {
-      return next({
-        path: '/login'
-      });
-    }
-
-    if (token && JSON.parse(user).role !== 3) {
-      return next({
-        path: '/usuarios'
-      });
-    }
-
-    if (token && JSON.parse(user).role === 3) {
-      return next({
-        path: "/usuarios/".concat(JSON.parse(user).id)
-      });
-    }
-  }
-
-  if (to.path == '/pagina-no-encontrada') {
-    return next();
-  }
-
-  if (to.path == '/login') {
-    if (token && JSON.parse(user).role !== 3) {
-      return next({
-        path: '/usuarios'
-      });
-    }
-
-    if (token && JSON.parse(user).role === 3) {
-      return next({
-        path: "/usuarios/".concat(JSON.parse(user).id)
-      });
-    }
-
-    return next();
-  }
-
-  if (to.path == '/usuarios') {
-    if (token && JSON.parse(user).role === 3) {
-      return next({
-        path: '/pagina-no-encontrada'
-      });
-    }
-
-    return next();
-  }
-
-  if (to.path == '/usuarios/nuevo') {
-    if (token && JSON.parse(user).role === 1) {
-      return next();
-    }
-
-    return next({
-      path: '/pagina-no-encontrada'
-    });
-  }
-
-  if (to.params.user_id != JSON.parse(user).id && JSON.parse(user).role == 3) {
-    return next({
-      path: '/pagina-no-encontrada'
-    });
-  }
-
-  return next();
-});
+router.beforeEach(_guards_js__WEBPACK_IMPORTED_MODULE_4__["guards"]);
 var app = new Vue({
   router: router,
   computed: {
@@ -2292,6 +2184,145 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UsersShow_vue_vue_type_template_id_9481ae6c_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/guards.js":
+/*!********************************!*\
+  !*** ./resources/js/guards.js ***!
+  \********************************/
+/*! exports provided: guards */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "guards", function() { return guards; });
+function guards(to, from, next) {
+  var token = localStorage.token;
+  var user = localStorage.user;
+
+  if (to.meta.authenticated && !token) {
+    return next({
+      path: '/login'
+    });
+  }
+
+  if (to.path == '/') {
+    if (!token) {
+      return next({
+        path: '/login'
+      });
+    }
+
+    if (token && JSON.parse(user).role !== 3) {
+      return next({
+        path: '/usuarios'
+      });
+    }
+
+    if (token && JSON.parse(user).role === 3) {
+      return next({
+        path: "/usuarios/".concat(JSON.parse(user).id)
+      });
+    }
+  }
+
+  if (to.path == '/pagina-no-encontrada') {
+    return next();
+  }
+
+  if (to.path == '/login') {
+    if (token && JSON.parse(user).role !== 3) {
+      return next({
+        path: '/usuarios'
+      });
+    }
+
+    if (token && JSON.parse(user).role === 3) {
+      return next({
+        path: "/usuarios/".concat(JSON.parse(user).id)
+      });
+    }
+
+    return next();
+  }
+
+  if (to.path == '/usuarios') {
+    if (token && JSON.parse(user).role === 3) {
+      return next({
+        path: '/pagina-no-encontrada'
+      });
+    }
+
+    return next();
+  }
+
+  if (to.path == '/usuarios/nuevo') {
+    if (token && JSON.parse(user).role === 1) {
+      return next();
+    }
+
+    return next({
+      path: '/pagina-no-encontrada'
+    });
+  }
+
+  if (to.params.user_id != JSON.parse(user).id && JSON.parse(user).role == 3) {
+    return next({
+      path: '/pagina-no-encontrada'
+    });
+  }
+
+  return next();
+}
+
+/***/ }),
+
+/***/ "./resources/js/routes.js":
+/*!********************************!*\
+  !*** ./resources/js/routes.js ***!
+  \********************************/
+/*! exports provided: routes */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "routes", function() { return routes; });
+/* harmony import */ var _components_Page404__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Page404 */ "./resources/js/components/Page404.vue");
+/* harmony import */ var _components_LoginForm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/LoginForm */ "./resources/js/components/LoginForm.vue");
+/* harmony import */ var _components_UsersShow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/UsersShow */ "./resources/js/components/UsersShow.vue");
+/* harmony import */ var _components_UsersIndex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/UsersIndex */ "./resources/js/components/UsersIndex.vue");
+/* harmony import */ var _components_UsersCreateForm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/UsersCreateForm */ "./resources/js/components/UsersCreateForm.vue");
+
+
+
+
+
+var routes = [{
+  path: '/login',
+  component: _components_LoginForm__WEBPACK_IMPORTED_MODULE_1__["default"]
+}, {
+  path: '/usuarios',
+  component: _components_UsersIndex__WEBPACK_IMPORTED_MODULE_3__["default"],
+  meta: {
+    authenticated: true
+  }
+}, {
+  path: '/usuarios/nuevo',
+  component: _components_UsersCreateForm__WEBPACK_IMPORTED_MODULE_4__["default"],
+  meta: {
+    authenticated: true
+  }
+}, {
+  path: '/usuarios/:user_id',
+  component: _components_UsersShow__WEBPACK_IMPORTED_MODULE_2__["default"],
+  meta: {
+    authenticated: true
+  }
+}, {
+  path: '*',
+  component: _components_Page404__WEBPACK_IMPORTED_MODULE_0__["default"]
+}];
 
 /***/ }),
 
